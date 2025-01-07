@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Currency } from './types';
 import Balance from './components/Balance';
-import LoadingOverlay from './components/LoadingOverlay';
 import SwitchButton from './components/SwitchButton';
 import Rate from './components/Rate';
 import originalPriceData from './mocks/price.json';
@@ -15,7 +14,6 @@ function App() {
   const [showOutputSelector, setShowOutputSelector] = useState(false);
   const [currencySearchTerm, setCurrencySearchTerm] = useState<string>('');
   const [isSwitching, setIsSwitching] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [priceData, setPriceData] = useState<Currency[]>(originalPriceData);
 
   const handleCurrencyAmountInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,14 +79,12 @@ function App() {
 
   useEffect(() => {
     if (isSwitching) return;
-    setIsLoading(true);
-    // simulate loading
+    // simulate delay
     const calculationTimer = setTimeout(() => {
       const inputValue = parseFloat(inputAmount) || 0;
       const exchangeRate = inputCurrency.price / outputCurrency.price;
       setOutputAmount((inputValue * exchangeRate).toFixed(6));
-      setIsLoading(false);
-    }, 200);
+    }, 500);
     return () => clearTimeout(calculationTimer);
   }, [inputCurrency, outputCurrency, inputAmount, isSwitching]);
 
@@ -123,7 +119,6 @@ function App() {
           />
           <Rate inputCurrency={inputCurrency} outputCurrency={outputCurrency} />
         </div>
-        {isLoading && <LoadingOverlay />}
       </div>
     </div>
   );
